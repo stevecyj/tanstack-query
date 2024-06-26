@@ -1,12 +1,57 @@
 <script setup lang="ts">
+import { ref, type Ref } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+
+// const props = defineProps<{
+//   id: number
+// }>()
+let todoId = ref<number>(1)
+
+function fetchTodoById(id: number) {
+  return fetch(`https://jsonplaceholder.typicode.com/todos/${id}`).then((response) =>
+    response.json()
+  )
+}
+
+function useTodo(id: Ref<number>) {
+  return useQuery({
+    queryKey: ['TODO', todoId],
+    queryFn: () => fetchTodoById(id.value)
+  })
+}
+
+// const { data, error, isFetching } = useTodo(todoId)
+
+function handleClick() {
+  console.log('click')
+  todoId.value++
+}
+
+function handleChange() {
+  console.log('change')
+}
 </script>
 
 <template>
   <header>
+    <VueQueryDevtools />
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
+    <button @click="handleClick">click</button>
+    <!-- <select v-model="todoId" @change="handleChange">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
+    <select v-model="todoId" @change="handleChange">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select> -->
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
 
